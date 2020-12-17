@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: processing-service
+  name: ucprocessing-service
   labels:
-    app: processing
+    app: ucprocessing
 spec:
   selector:
-    app: processing
+    app: ucprocessing
   ports:
     - name: http
       port: 80
@@ -15,34 +15,34 @@ spec:
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: processing-ingress
+  name: ucprocessing-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
   rules:
   - http:
       paths:
-        - path: /processing/(.*)
+        - path: /ucprocessing/(.*)
           backend:
-            serviceName: processing-service
+            serviceName: ucprocessing-service
             servicePort: 80
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: processing
+  name: ucprocessing
   labels:
-    app: processing
+    app: ucprocessing
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: processing
+      app: ucprocessing
   template:
     metadata:
       labels:
-        app: processing
+        app: ucprocessing
     spec:
       containers:
-      - name: processing
+      - name: ucprocessing
         image: JSVAR_DOCKERIMAGE
