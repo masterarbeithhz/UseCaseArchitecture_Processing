@@ -4,7 +4,7 @@
  </head>
  <body>
 <?php
-include('envVariables.php');
+include('/envVariables.php');
 
 //Make sure that it is a POST request.
 if(strcasecmp($_SERVER['REQUEST_METHOD'], 'POST') != 0){
