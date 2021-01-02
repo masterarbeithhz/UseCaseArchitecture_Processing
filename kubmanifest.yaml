@@ -17,6 +17,17 @@ spec:
       containers:
       - name: ucprocessing
         image: JSVAR_DOCKERIMAGE
+        env:
+        - name: UC_DBNAME
+          value: mysquc-service
+        - name: UC_DBUSER
+          value: root
+        - name: UC_DBDB
+          value: testdb
+        - name: UC_DBPSWD
+          value: Philipp1
+        - name: UC_DOMAIN
+          value: http://hhz.regel-it.de
 ---
 apiVersion: v1
 kind: Service

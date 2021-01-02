@@ -4,6 +4,7 @@
  </head>
  <body>
 <?php
+include('envVariables.php');
 
 //Make sure that it is a POST request.
 if(strcasecmp($_SERVER['REQUEST_METHOD'], 'POST') != 0){
@@ -24,7 +25,7 @@ $wifi = $obj->payload_fields->wifi;
 $ble = $obj->payload_fields->ble;
 
 
-  $conn = mysqli_connect("mysquc-service","root","Philipp1","testdb");
+  $conn = mysqli_connect(DATABASENAME,DATABASEUSER,DATABASEPSWD,DATABASEDB);
 
   if ($conn->connect_error) {
     die("ERROR: Unable to connect: " . $conn->connect_error);
