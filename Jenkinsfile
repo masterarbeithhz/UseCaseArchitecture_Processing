@@ -5,6 +5,10 @@ pipeline {
     imagefolder = "masterarbeithhz/usecasepaxcounter:"
     imagetag = "processing${env.BUILD_ID}"
     giturl = 'https://github.com/masterarbeithhz/UseCaseArchitecture_Processing.git'
+    PROJECT_ID = 'crafty-sound-297315'
+    CLUSTER_NAME = 'cluster-6'
+    LOCATION = 'us-central1-c'
+    CREDENTIALS_ID = 'crafty-sound-297315'
   }
   
   agent any
@@ -46,13 +50,11 @@ pipeline {
         }
       }
     
-    stage('Deploy App') {
-      steps {
-        script {
-          kubernetesDeploy(configs: "kubmanifest.yaml", kubeconfigId: "mykubeconfig1")
+        stage('Deploy to GKE') {
+            steps{
+                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'kubmanifest.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+            }
         }
-      }
-    }
 
   }
 
