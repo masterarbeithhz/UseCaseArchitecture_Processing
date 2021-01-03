@@ -1,7 +1,14 @@
+#Definition Namespace für alle Ressourcen
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: JSVAR_NAMESPACE
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ucprocessing
+  namespace: JSVAR_NAMESPACE
   labels:
     app: ucprocessing
 spec:
@@ -18,21 +25,26 @@ spec:
       - name: ucprocessing
         image: JSVAR_DOCKERIMAGE
         env:
+        - name: UC_CUSTOMER
+          value: JSVAR_UC_CUSTOMER
         - name: UC_DBNAME
-          value: mysquc-service
+          value: JSVAR_UC_DBNAME
         - name: UC_DBUSER
-          value: root
+          value: JSVAR_UC_DBUSER
         - name: UC_DBDB
-          value: testdb
+          value: JSVAR_UC_DBDB
         - name: UC_DBPSWD
-          value: Philipp1
+          value: JSVAR_UC_DBPSWD
         - name: UC_DOMAIN
-          value: http://hhz.regel-it.de
+          value: JSVAR_UC_DOMAIN
+        - name: UC_NAMESPACE
+          value: JSVAR_UC_NAMESPACE
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: ucprocessing-service
+  namespace: JSVAR_NAMESPACE
 spec:
   type: NodePort
   selector:
@@ -46,13 +58,14 @@ apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: ucprocessing-ingress
+  namespace: JSVAR_NAMESPACE
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /$1
 spec:
   rules:
   - http:
       paths:
-        - path: /ucprocessing/(.*)
+        - path: /JSVAR_NAMESPACE/ucprocessing/(.*)
           backend:
             serviceName: ucprocessing-service
             servicePort: 80

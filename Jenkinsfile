@@ -15,6 +15,27 @@ pipeline {
 
   stages {
 
+    stage('Checkout groovy') {
+      steps {
+        git url:"https://github.com/masterarbeithhz/CustomerConfiguration.git", branch:'main'
+        
+      }
+    }
+
+    stage("Load config") {
+      steps {
+        script {
+          load "${customer_groovy}.groovy"
+          echo "${env.UC_CUSTOMER}"
+          echo "${env.UC_DBNAME}"
+          echo "${env.UC_DBUSER}"
+          echo "${env.UC_DBDB}"
+          echo "${env.UC_DBPSWD}"
+          echo "${env.UC_DOMAIN}"
+        }
+      }
+    }
+
     stage('Checkout Source') {
       steps {
         git url:"${giturl}", branch:'main'
@@ -39,20 +60,28 @@ pipeline {
             }
         }
 
-      stage("Prepare Yaml") {
+       stage("Prepare Yaml") {
         steps {
           script {
             def data = readFile file: "kubmanifest.yaml"
             data = data.replaceAll("JSVAR_DOCKERIMAGE", "${imagefolder}${imagetag}")
+            data = data.replaceAll("JSVAR_UC_CUSTOMER", "${env.UC_CUSTOMER}")
+            data = data.replaceAll("JSVAR_UC_DBNAME", "${env.UC_DBNAME}")
+            data = data.replaceAll("JSVAR_UC_DBUSER", "${env.UC_DBUSER}")
+            data = data.replaceAll("JSVAR_UC_DBDB", "${env.UC_DBDB}")
+            data = data.replaceAll("JSVAR_UC_DBPSWD", "${env.UC_DBPSWD}")
+            data = data.replaceAll("JSVAR_UC_DOMAIN", "${env.UC_DOMAIN}")
+            data = data.replaceAll("JSVAR_NAMESPACE", "${env.C_NAMESPACE}")
             echo data
             writeFile file: "kubmanifest.yaml", text: data
           }
         }
       }
     
+    
         stage('Deploy to GKE') {
             steps{
-                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'kubmanifest.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, namespace:env.C_NAMESPACE, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'kubmanifest.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
             }
         }
 

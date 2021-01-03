@@ -8,4 +8,7 @@ define("DATABASEPSWD", getenv('UC_DBPSWD'));
 # DOMAIN URL
 define("DOMAIN", getenv('UC_DOMAIN'));
 
+# NAMESPACE (FOR URL)
+define("NAMESPACE", getenv('JSVAR_NAMESPACE'));
+
 ?>
